@@ -1,17 +1,17 @@
-# 🤖 AI Chat Assistant
+# AI Chat Assistant
 
 A beautiful, animated chat interface with real-time audio recording and voice visualization built with React, TypeScript, and Framer Motion.
 
-## ✨ Features
+## Features
 
-- 🎤 **Real-time Audio Recording** - Record voice messages with live audio visualization
-- 🎨 **Smooth Animations** - Framer Motion powered message animations
-- 💭 **Thinking Indicator** - Beautiful Lottie animation while processing
-- 📎 **File Upload** - Support for audio file uploads
-- 🎯 **TypeScript** - Fully typed for better developer experience
-- 🌊 **Audio Visualizer** - 32-bar frequency visualizer that reacts to your voice
+- **Real-time Audio Recording** - Record voice messages with live audio visualization
+- **Smooth Animations** - Framer Motion powered message animations
+- **Thinking Indicator** - Beautiful Lottie animation while processing
+- **File Upload** - Support for audio file uploads
+- **TypeScript** - Fully typed for better developer experience
+- **Audio Visualizer** - 32-bar frequency visualizer that reacts to your voice
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -48,7 +48,7 @@ npm.cmd run dev
 
 The app will be available at `http://localhost:5173`
 
-## 🎮 How to Use
+## How to Use
 
 1. **Type a Message**: Enter text in the input area and press Enter or click the send button
 2. **Record Audio**: Click the microphone icon to start recording
@@ -58,7 +58,7 @@ The app will be available at `http://localhost:5173`
 3. **Upload Audio**: Click the paperclip icon to upload an audio file (WAV or MP3)
 4. **View Responses**: Messages animate in smoothly with a 2-second mock response delay
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -74,7 +74,7 @@ src/
 └── index.css                     # Global styles
 ```
 
-## 🎨 Components
+## Components
 
 ### ChatView
 - Manages conversation state
@@ -93,7 +93,7 @@ src/
 - Frequency analysis using Web Audio API
 - Smooth animations with Framer Motion
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **React 19** - UI framework
 - **TypeScript** - Type safety
@@ -105,14 +105,14 @@ src/
 - **Web Audio API** - Audio visualization
 - **MediaRecorder API** - Audio recording
 
-## 📝 Notes
+## Notes
 
 - The backend is currently mocked with a 2-second delay
 - Audio files are recorded in WebM format
 - The visualizer uses 32 frequency bars for optimal performance
 - Microphone permission is required for recording
 
-## 🎯 Future Enhancements
+## Future Enhancements
 
 - Connect to real AI backend (OpenAI, etc.)
 - Add speech-to-text transcription
@@ -121,10 +121,3 @@ src/
 - Dark/light theme toggle
 - Message editing and deletion
 
-## 📄 License
-
-MIT
-
----
-
-Built with ❤️ using React and TypeScript
