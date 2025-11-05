@@ -68,44 +68,6 @@ cargo run
 
 The service listens on http://localhost:8080 (by default) and exposes endpoints like /mint.
 
-📬 API Endpoints
-
-POST /mint – Submit a mint request
-
-{
-  "wallet_address": "0x1234…",
-  "metadata_uri": "ipfs://Qm…",
-  "title": "Voice Interaction #1",
-  "description": "Transcript + audio of session",
-  "audio_url": "https://…/audio.mp3"
-}
-
-
-Response:
-
-{
-  "token_id": "123",
-  "tx_hash": "0xdeadbeef…",
-  "status": "minted",
-  "asset_url": "ipfs://Qm…"
-}
-
-
-GET /status?token_id=123 – Check status of a minted asset (optional)
-
-GET /assets?wallet_address=0x1234… – List assets for a wallet (optional)
-
-🧪 Debugging Tips
-
-Ensure environment variables are set correctly (RPC URL, keys, contract address)
-
-Check storage upload logs: if metadata URI returns error or invalid link
-
-Inspect mint transaction on blockchain explorer: if tx fails or is pending too long
-
-Return and inspect error responses from mint API/service
-
-Confirm wallet address and chain match expected network
 
 📝 License
 
