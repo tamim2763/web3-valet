@@ -73,3 +73,4 @@ env/
 .cache/
 tmp/
 temp/
+/frontend/node_modules
