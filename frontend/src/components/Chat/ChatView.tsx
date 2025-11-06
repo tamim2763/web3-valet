@@ -6,6 +6,7 @@ import { InputArea } from '../InputArea/InputArea';
 import { AgentAudioPlayer } from './AgentAudioPlayer';
 import { AgentSelector } from './AgentSelector';
 import { MintModal } from './MintModal';
+import { sendTextInput, sendAudioInput, getAudioUrl } from '../../services/api';
 
 // Type definition for chat messages
 interface ChatMessage {
@@ -19,7 +20,8 @@ export const ChatView: React.FC = () => {
   // State management
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [selectedAgentName, setSelectedAgentName] = useState<string | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState(false);
   const [currentItemToMint, setCurrentItemToMint] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,11 @@ export const ChatView: React.FC = () => {
 
   // Handle chat submission with real API calls
   const handleChatSubmit = async (prompt: string, file?: File) => {
+    if (!selectedAgentId) {
+      console.error('No agent selected');
+      return;
+    }
+
     // Set loading state
     setIsLoading(true);
 
@@ -49,40 +56,10 @@ export const ChatView: React.FC = () => {
 
       if (file) {
         // Handle audio file upload
-        const formData = new FormData();
-        formData.append('file', file);
-        if (selectedAgent) {
-          formData.append('agent_id', selectedAgent);
-        }
-
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/input/audio`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to send audio');
-        }
-
-        data = await response.json();
+        data = await sendAudioInput(selectedAgentId, file);
       } else {
         // Handle text input
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/input/text`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            agent_id: selectedAgent,
-            user_text: prompt,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to send text');
-        }
-
-        data = await response.json();
+        data = await sendTextInput(selectedAgentId, prompt);
       }
 
       // Create agent response with real data from API
@@ -90,7 +67,7 @@ export const ChatView: React.FC = () => {
         id: (Date.now() + 1).toString(),
         role: 'agent',
         text: data.reply_text,
-        audioUrl: data.audio_url,
+        audioUrl: getAudioUrl(data.audio_url),
       };
 
       // Add agent response to the conversation
@@ -102,7 +79,7 @@ export const ChatView: React.FC = () => {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'agent',
-        text: 'Sorry, there was an error processing your request. Please try again.',
+        text: 'Sorry, there was an error processing your request. Please make sure the backend is running and try again.',
       };
       
       setMessages((prev) => [...prev, errorMessage]);
@@ -110,6 +87,19 @@ export const ChatView: React.FC = () => {
       // Clear loading state
       setIsLoading(false);
     }
+  };
+
+  // Handle agent selection
+  const handleAgentSelect = (agentId: string, agentName: string) => {
+    setSelectedAgentId(agentId);
+    setSelectedAgentName(agentName);
+  };
+
+  // Handle agent change
+  const handleChangeAgent = () => {
+    setSelectedAgentId(null);
+    setSelectedAgentName(null);
+    setMessages([]);
   };
 
   return (
@@ -122,22 +112,19 @@ export const ChatView: React.FC = () => {
       />
 
       {/* Show agent selector if no agent is selected */}
-      {!selectedAgent ? (
-        <AgentSelector onAgentSelect={setSelectedAgent} />
+      {!selectedAgentId ? (
+        <AgentSelector onAgentSelect={handleAgentSelect} />
       ) : (
         <>
           {/* Header */}
           <div className="w-full bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
             <div className="flex-1" />
             <h1 className="text-xl font-bold text-white text-center flex-1">
-              {selectedAgent}
+              {selectedAgentName}
             </h1>
             <div className="flex-1 flex justify-end">
               <button
-                onClick={() => {
-                  setSelectedAgent(null);
-                  setMessages([]);
-                }}
+                onClick={handleChangeAgent}
                 className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
               >
                 Change Agent

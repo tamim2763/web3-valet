@@ -1,14 +1,15 @@
 // src/components/Chat/AgentSelector.tsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaRobot, FaExchangeAlt, FaComments } from 'react-icons/fa';
+import { FaRobot, FaExchangeAlt, FaComments, FaCode } from 'react-icons/fa';
+import { getAgents, Agent as ApiAgent } from '../../services/api';
 
 interface AgentSelectorProps {
-  onAgentSelect: (agentName: string) => void;
+  onAgentSelect: (agentId: string, agentName: string) => void;
 }
 
 interface Agent {
-  id?: string;
+  id: string;
   name: string;
   description: string;
   icon: React.ReactNode;
@@ -18,24 +19,28 @@ interface Agent {
 // Helper function to get icon based on agent name
 const getAgentIcon = (name: string): React.ReactNode => {
   const lowerName = name.toLowerCase();
-  if (lowerName.includes('nft') || lowerName.includes('analyst')) {
-    return <FaRobot size={32} />;
-  } else if (lowerName.includes('transaction')) {
+  if (lowerName.includes('web3') || lowerName.includes('blockchain') || lowerName.includes('expert')) {
     return <FaExchangeAlt size={32} />;
-  } else {
+  } else if (lowerName.includes('voice') || lowerName.includes('assistant')) {
     return <FaComments size={32} />;
+  } else if (lowerName.includes('code') || lowerName.includes('helper')) {
+    return <FaCode size={32} />;
+  } else {
+    return <FaRobot size={32} />;
   }
 };
 
 // Helper function to get color based on agent name
 const getAgentColor = (name: string): string => {
   const lowerName = name.toLowerCase();
-  if (lowerName.includes('nft') || lowerName.includes('analyst')) {
+  if (lowerName.includes('web3') || lowerName.includes('blockchain') || lowerName.includes('expert')) {
     return 'from-purple-600 to-purple-400';
-  } else if (lowerName.includes('transaction')) {
-    return 'from-blue-600 to-blue-400';
-  } else {
+  } else if (lowerName.includes('voice') || lowerName.includes('assistant')) {
     return 'from-green-600 to-green-400';
+  } else if (lowerName.includes('code') || lowerName.includes('helper')) {
+    return 'from-orange-600 to-orange-400';
+  } else {
+    return 'from-blue-600 to-blue-400';
   }
 };
 
@@ -48,16 +53,10 @@ export const AgentSelector: React.FC<AgentSelectorProps> = ({ onAgentSelect }) =
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/agents`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch agents');
-        }
-
-        const data = await response.json();
+        const data = await getAgents();
         
         // Transform API response to match our Agent interface
-        const transformedAgents: Agent[] = data.map((agent: any) => ({
+        const transformedAgents: Agent[] = data.map((agent: ApiAgent) => ({
           id: agent.id,
           name: agent.name,
           description: agent.description,
@@ -69,7 +68,7 @@ export const AgentSelector: React.FC<AgentSelectorProps> = ({ onAgentSelect }) =
         setLoading(false);
       } catch (err) {
         console.error('Error fetching agents:', err);
-        setError('Failed to load agents. Please try again.');
+        setError('Failed to load agents. Please make sure the backend is running.');
         setLoading(false);
       }
     };
@@ -108,8 +107,8 @@ export const AgentSelector: React.FC<AgentSelectorProps> = ({ onAgentSelect }) =
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl w-full">
         {agents.map((agent, index) => (
           <motion.button
-            key={agent.name}
-            onClick={() => onAgentSelect(agent.name)}
+            key={agent.id}
+            onClick={() => onAgentSelect(agent.id, agent.name)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
